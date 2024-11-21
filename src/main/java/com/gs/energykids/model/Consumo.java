@@ -9,21 +9,22 @@ import java.time.LocalDate;
 public class Consumo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "consumo_seq")
+    @SequenceGenerator(name = "consumo_seq", sequenceName = "SEQ_CONSUMO", allocationSize = 1)
     @Column(name = "CONSUMO_ID")
     private Long id;
 
     @NotNull(message = "O dispositivo é obrigatório")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "DISPOSITIVO_ID", nullable = false)
     private Dispositivo dispositivo;
 
     @NotNull(message = "A data de consumo é obrigatória")
-    @Column(name = "DATA_CONSUMO", nullable = false)
+    @Column(name = "DATA_REGISTRO", nullable = false)
     private LocalDate dataConsumo;
 
     @NotNull(message = "A energia consumida é obrigatória")
-    @Column(name = "ENERGIA_CONSUMIDA_KWH", nullable = false)
+    @Column(name = "CONSUMO_MENSAL_KWH", nullable = false)
     private Double energiaConsumidaKwh;
 
     public Consumo() {

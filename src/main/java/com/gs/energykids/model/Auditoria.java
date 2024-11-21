@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 public class Auditoria {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AUDITORIA_ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auditoria_seq")
+    @SequenceGenerator(name = "auditoria_seq", sequenceName = "SEQ_AUDITORIA", allocationSize = 1)
+    @Column(name = "AUDIT_ID")
     private Long id;
 
     @NotBlank(message = "O nome da tabela alterada é obrigatório")
-    @Column(name = "TABELA_ALTERADA", nullable = false, length = 100)
+    @Column(name = "TABELA", nullable = false, length = 100)
     private String tabelaAlterada;
 
     @NotBlank(message = "A operação realizada é obrigatória")
@@ -23,15 +24,15 @@ public class Auditoria {
     private String operacao;
 
     @NotNull(message = "A data e hora da operação são obrigatórias")
-    @Column(name = "DATA_HORA", nullable = false)
+    @Column(name = "DATA", nullable = false)
     private LocalDateTime dataHora;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USUARIO_ID")
     private Usuario usuario;
 
     @Lob
-    @Column(name = "DETALHES")
+    @Column(name = "DESCRICAO")
     private String detalhes;
 
     public Auditoria() {

@@ -12,9 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @RestController
 @RequestMapping("/dicas")
 public class DicaEconomiaController {
@@ -26,7 +23,7 @@ public class DicaEconomiaController {
     public ResponseEntity<Page<DicaEconomia>> listarDicas(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "dataCriacao,asc") String sort) {
+            @RequestParam(defaultValue = "id,asc") String sort) { // Ordenação ajustada para usar o campo "id"
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort.split(",")[0]).ascending());
         if (sort.endsWith(",desc")) {
             pageable = PageRequest.of(page, size, Sort.by(sort.split(",")[0]).descending());
@@ -44,7 +41,6 @@ public class DicaEconomiaController {
 
     @PostMapping
     public ResponseEntity<DicaEconomia> criarDica(@Valid @RequestBody DicaEconomia dica) {
-        dica.setDataCriacao(LocalDate.now());
         DicaEconomia salva = dicaEconomiaRepository.save(dica);
         return ResponseEntity.ok(salva);
     }
@@ -54,6 +50,8 @@ public class DicaEconomiaController {
         DicaEconomia existente = dicaEconomiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dica com ID " + id + " não encontrada."));
         existente.setDescricao(dica.getDescricao());
+        existente.setCategoria(dica.getCategoria());
+        existente.setRelevancia(dica.getRelevancia());
         DicaEconomia atualizada = dicaEconomiaRepository.save(existente);
         return ResponseEntity.ok(atualizada);
     }

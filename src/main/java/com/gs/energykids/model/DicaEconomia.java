@@ -2,32 +2,34 @@ package com.gs.energykids.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Entity
-@Table(name = "DICA_ECONOMIA")
+@Table(name = "DICAECONOMIA")
 public class DicaEconomia {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dica_economia_seq")
+    @SequenceGenerator(name = "dica_economia_seq", sequenceName = "SEQ_DICA_ECONOMIA", allocationSize = 1)
     @Column(name = "DICA_ID")
     private Long id;
 
     @NotBlank(message = "A descrição da dica é obrigatória")
-    @Column(name = "DESCRICAO", nullable = false, length = 255)
+    @Column(name = "TEXTO_DICA", nullable = false, columnDefinition = "CLOB")
     private String descricao;
 
-    @NotNull(message = "A data de criação é obrigatória")
-    @Column(name = "DATA_CRIACAO", nullable = false)
-    private LocalDate dataCriacao;
+    @Column(name = "CATEGORIA", length = 50)
+    private String categoria;
+
+    @Column(name = "RELEVANCIA", length = 20)
+    private String relevancia;
 
     public DicaEconomia() {
     }
 
-    public DicaEconomia(String descricao, LocalDate dataCriacao) {
+    public DicaEconomia(String descricao, String categoria, String relevancia) {
         this.descricao = descricao;
-        this.dataCriacao = dataCriacao;
+        this.categoria = categoria;
+        this.relevancia = relevancia;
     }
 
     public Long getId() {
@@ -46,12 +48,20 @@ public class DicaEconomia {
         this.descricao = descricao;
     }
 
-    public LocalDate getDataCriacao() {
-        return dataCriacao;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public void setDataCriacao(LocalDate dataCriacao) {
-        this.dataCriacao = dataCriacao;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public String getRelevancia() {
+        return relevancia;
+    }
+
+    public void setRelevancia(String relevancia) {
+        this.relevancia = relevancia;
     }
 
     @Override
@@ -59,7 +69,8 @@ public class DicaEconomia {
         return "DicaEconomia{" +
                 "id=" + id +
                 ", descricao='" + descricao + '\'' +
-                ", dataCriacao=" + dataCriacao +
+                ", categoria='" + categoria + '\'' +
+                ", relevancia='" + relevancia + '\'' +
                 '}';
     }
 }

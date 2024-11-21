@@ -9,12 +9,13 @@ import jakarta.validation.constraints.NotNull;
 public class Dispositivo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dispositivo_seq")
+    @SequenceGenerator(name = "dispositivo_seq", sequenceName = "SEQ_DISPOSITIVO", allocationSize = 1)
     @Column(name = "DISPOSITIVO_ID")
     private Long id;
 
     @NotBlank(message = "O nome do dispositivo é obrigatório")
-    @Column(name = "NOME", nullable = false)
+    @Column(name = "NOME_DISPOSITIVO", nullable = false)
     private String nome;
 
     @NotNull(message = "A potência é obrigatória")
@@ -22,11 +23,11 @@ public class Dispositivo {
     private Double potenciaWatts;
 
     @NotNull(message = "O consumo diário é obrigatório")
-    @Column(name = "CONSUMO_HORAS_DIA", nullable = false)
+    @Column(name = "HORAS_USO_DIARIO", nullable = false)
     private Double consumoHorasDia;
 
     @NotNull(message = "O usuário associado é obrigatório")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USUARIO_ID", nullable = false)
     private Usuario usuario;
 

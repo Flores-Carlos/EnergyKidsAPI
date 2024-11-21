@@ -1,25 +1,31 @@
 package com.gs.energykids.controller;
 
-import com.gs.energykids.exception.ResourceNotFoundException;
 import com.gs.energykids.model.Dispositivo;
+import com.gs.energykids.model.Usuario;
 import com.gs.energykids.repository.DispositivoRepository;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gs.energykids.repository.UsuarioRepository;
+import com.gs.energykids.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/dispositivos")
 public class DispositivoController {
 
-    @Autowired
-    private DispositivoRepository dispositivoRepository;
+    private final DispositivoRepository dispositivoRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public DispositivoController(DispositivoRepository dispositivoRepository, UsuarioRepository usuarioRepository) {
+        this.dispositivoRepository = dispositivoRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     @GetMapping
     public ResponseEntity<Page<Dispositivo>> listarDispositivos(
@@ -42,27 +48,51 @@ public class DispositivoController {
     }
 
     @PostMapping
-    public ResponseEntity<Dispositivo> criarDispositivo(@Valid @RequestBody Dispositivo dispositivo) {
+    public ResponseEntity<Dispositivo> criarDispositivo(@RequestBody Map<String, Object> request) {
+        Long usuarioId = Long.valueOf(request.get("usuarioId").toString());
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + usuarioId + " não encontrado."));
+
+        Dispositivo dispositivo = new Dispositivo();
+        dispositivo.setNome(request.get("nome").toString());
+        dispositivo.setPotenciaWatts(Double.valueOf(request.get("potenciaWatts").toString()));
+        dispositivo.setConsumoHorasDia(Double.valueOf(request.get("consumoHorasDia").toString()));
+        dispositivo.setUsuario(usuario);
+
         Dispositivo salvo = dispositivoRepository.save(dispositivo);
-        return ResponseEntity.ok(salvo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Dispositivo> atualizarDispositivo(@PathVariable Long id, @Valid @RequestBody Dispositivo dispositivo) {
-        Dispositivo existente = dispositivoRepository.findById(id)
+    public ResponseEntity<Dispositivo> atualizarDispositivo(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        Dispositivo dispositivoExistente = dispositivoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dispositivo com ID " + id + " não encontrado."));
-        existente.setNome(dispositivo.getNome());
-        existente.setPotenciaWatts(dispositivo.getPotenciaWatts());
-        existente.setConsumoHorasDia(dispositivo.getConsumoHorasDia());
-        Dispositivo atualizado = dispositivoRepository.save(existente);
+
+        if (request.containsKey("nome")) {
+            dispositivoExistente.setNome(request.get("nome").toString());
+        }
+        if (request.containsKey("potenciaWatts")) {
+            dispositivoExistente.setPotenciaWatts(Double.valueOf(request.get("potenciaWatts").toString()));
+        }
+        if (request.containsKey("consumoHorasDia")) {
+            dispositivoExistente.setConsumoHorasDia(Double.valueOf(request.get("consumoHorasDia").toString()));
+        }
+        if (request.containsKey("usuarioId")) {
+            Long usuarioId = Long.valueOf(request.get("usuarioId").toString());
+            Usuario usuario = usuarioRepository.findById(usuarioId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + usuarioId + " não encontrado."));
+            dispositivoExistente.setUsuario(usuario);
+        }
+
+        Dispositivo atualizado = dispositivoRepository.save(dispositivoExistente);
         return ResponseEntity.ok(atualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirDispositivo(@PathVariable Long id) {
-        Dispositivo existente = dispositivoRepository.findById(id)
+        Dispositivo dispositivo = dispositivoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dispositivo com ID " + id + " não encontrado."));
-        dispositivoRepository.delete(existente);
+        dispositivoRepository.delete(dispositivo);
         return ResponseEntity.noContent().build();
     }
 }
