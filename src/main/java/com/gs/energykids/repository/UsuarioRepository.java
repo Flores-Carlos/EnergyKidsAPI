@@ -2,9 +2,8 @@ package com.gs.energykids.repository;
 
 import com.gs.energykids.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-@Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-
+    Optional<Usuario> findByEmail(String email);
 }
