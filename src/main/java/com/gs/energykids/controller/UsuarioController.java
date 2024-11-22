@@ -60,7 +60,6 @@ public class UsuarioController {
     public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody Usuario usuario) {
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
 
-        // Enviar mensagem para RabbitMQ
         emailProducer.sendEmailMessage(
                 usuarioSalvo.getEmail(),
                 "Bem-vindo ao Energy Kids",

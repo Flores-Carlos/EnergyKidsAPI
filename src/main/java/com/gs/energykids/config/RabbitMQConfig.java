@@ -11,6 +11,6 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue emailQueue() {
-        return new Queue(EMAIL_QUEUE, true); // Fila durável
+        return new Queue(EMAIL_QUEUE, true);
     }
 }
