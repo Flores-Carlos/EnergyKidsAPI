@@ -19,15 +19,15 @@ Este projeto foi desenvolvido pelos integrantes da equipe **Turma 2TDSPX**:
 O código completo da API está disponível neste repositório.
 
 ### Links de Deploys em Nuvem + Acessos
-- **API Base URL**: [https://energy-kids.herokuapp.com](https://energy-kids-api-415c22a2d7d8.herokuapp.com)
+- **API Base URL**: [Deploy](https://energy-kids-api-415c22a2d7d8.herokuapp.com)
     - **Usuário**: admin
     - **Senha**: admin123
 
 ### Vídeo Pitch
-- **Link do Pitch**: [Placeholder - Substitua pelo link do vídeo no YouTube ou equivalente]
+- **Link do Pitch**: [Vídeo Pitch](https://youtu.be/AqT9Dty7-7Y)
 
 ### Vídeo Demonstrativo
-- **Link da Demonstração**: [Placeholder - Substitua pelo link do vídeo no YouTube ou equivalente]
+- **Link da Demonstração**: [Vídeo de demonstração](https://youtu.be/l2RaYxzaQFA)
 
 ---
 
