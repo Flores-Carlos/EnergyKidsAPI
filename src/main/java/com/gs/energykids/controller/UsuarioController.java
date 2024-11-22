@@ -71,35 +71,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");
-        String senha = credentials.get("senha");
-
-        logger.info("Tentativa de login com o email: {}", email);
-
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    logger.error("Usuário com email {} não encontrado", email);
-                    return new ResourceNotFoundException("Usuário com email " + email + " não encontrado.");
-                });
-
-        if (!usuario.getSenhaHash().equals(senha)) {
-            logger.warn("Senha inválida para o email: {}", email);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        // Enviar mensagem para RabbitMQ
-        emailProducer.sendEmailMessage(
-                usuario.getEmail(),
-                "Login realizado com sucesso",
-                "Olá " + usuario.getNome() + ", você acabou de fazer login no Energy Kids."
-        );
-        logger.info("Login realizado com sucesso para o email: {}", email);
-
-        return ResponseEntity.ok().build();
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @Valid @RequestBody Usuario usuario) {
         Usuario existente = usuarioRepository.findById(id)
